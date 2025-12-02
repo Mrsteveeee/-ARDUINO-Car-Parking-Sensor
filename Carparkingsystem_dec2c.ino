@@ -2,37 +2,29 @@
 #include <LiquidCrystal_I2C.h>
 #include <Servo.h>
 
-// LCD: I2C address 0x27, 20x4 display
+
 LiquidCrystal_I2C lcd(0x27, 20, 4);
 
 Servo gate;
 
-// sensor pins (analog)
-const int sensorLeftPin   = A0;  // Entry
-const int sensorCenterPin = A1;  // Gate/Exit
-const int sensorRightPin  = A2;  // Parking slot
 
-// servo pin
+const int sensorLeftPin   = A0;  
+const int sensorCenterPin = A1;  
+const int sensorRightPin  = A2;  
 const int servoPin = 9;
-
-// Calibration values (tune for your sensors)
 const int analogMin = 0;
 const int analogMax = 800;
 const int distMin   = 0;
 const int distMax   = 100;
-
-// threshold for detecting car
 const int nearThreshold = 30;
-
-// servo angles
-const int servoClosed = 0;    // gate down
-const int servoOpen   = 90;   // gate up
+const int servoClosed = 0;    
+const int servoOpen   = 90;   
 
 bool gateIsUp = false;
 
 void setup() {
-  lcd.init();          // initialize I2C LCD
-  lcd.backlight();     // turn on backlight
+  lcd.init();          
+  lcd.backlight();     
   lcd.clear();
 
   gate.attach(servoPin);
@@ -58,18 +50,18 @@ void loop() {
   int centerVal = readSensorMapped(sensorCenterPin);
   int rightVal  = readSensorMapped(sensorRightPin);
 
-  // ---- Gate control logic ----
+
   if (leftVal <= nearThreshold && !gateIsUp) {
-    gate.write(servoOpen);   // open gate
+    gate.write(servoOpen);  
     gateIsUp = true;
   }
 
   if (centerVal <= nearThreshold && gateIsUp) {
-    gate.write(servoClosed); // close gate
+    gate.write(servoClosed);
     gateIsUp = false;
   }
 
-  // ---- Parking Lot Status ----
+
   lcd.clear();
   lcd.setCursor(0,1);
   if (rightVal <= nearThreshold) {
